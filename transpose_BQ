@@ -1,0 +1,27 @@
+library(tidyverse)
+library(tidyr)
+library(dplyr)
+
+
+############################################################ 
+
+# set working directory
+setwd("C:/Users/sandovall2/Downloads")
+
+# read in data
+ct <- read_csv("myFile.csv") 
+
+# remove "d_" character from column
+names(ct) <- gsub(x = names(ct), pattern = "d_.", replacement = "")  
+
+# remove columns that contain "key", "error", and "id"
+ct_step1 <- ct %>% select(-contains(c("key","error")), -starts_with(c("id"))) 
+
+# create long data with 2 conceptID columns
+ct_step2 <- ct_step1 %>% gather(key="concept1_concept2",value = "value",-Connect_ID) %>% 
+  filter(!is.na(value)) %>% separate(col = concept1_concept2,sep="_",into = c("concept1","concept2"))
+
+
+
+# biospecimen table transformed from 
+# 47 obs x 209 variables ->  1095 obs x 4 variables
